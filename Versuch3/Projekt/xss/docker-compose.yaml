@@ -1,0 +1,27 @@
+version: "3.8"
+services:
+    time:
+        build: ./time
+        restart: always
+    redis:
+        image: redis:latest
+        restart: always
+        volumes:
+            - ./redis-data:/data
+    api:
+        build: ./api
+        restart: always
+        links: 
+            - redis:redis
+    web:
+        image: nginx:latest
+        restart: always
+        volumes:
+            - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+            - ./website:/var/www/website
+        ports:
+            - "80:80"
+        links: 
+            - api:api
+volumes:
+    redis-data:
